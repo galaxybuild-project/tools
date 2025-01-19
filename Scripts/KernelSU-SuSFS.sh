@@ -37,22 +37,18 @@ install_kernel_su_next() {
 patch_susfs() {
     echo "Entering to KernelSU-Next directory..."
     cd KernelSU-Next
-    if [ $KERNEL_MAJOR -ge 5 ]; then
-        if [ $KERNEL_MAJOR -ge 10 ]; then
-        echo "Kernel version is >=5.10, using GKI patch"
+    if [ $KERNEL_MAJOR -ge 4 ]; then
+        if [ $KERNEL_MAJOR -ge 19 ]; then
+        echo "Kernel version is >=4.19, using GKI patch"
         curl -LSs "https://raw.githubusercontent.com/galaxybuild-project/tools/refs/heads/main/Patches/0001-KernelSU-Next-Implement-SUSFS-v1.5.3-plus-GKI.patch" > susfs.patch
         else
-            echo "Kernel version is <=5.10, using non-GKI patch"
+            echo "Kernel version is <=4.19, using non-GKI patch"
             curl -LSs "https://raw.githubusercontent.com/galaxybuild-project/tools/refs/heads/main/Patches/0001-KernelSU-Next-Implement-susfs-v1.5.3-plus-non-gki.patch" > susfs.patch
         fi
         patch -p1 < susfs.patch
         rm -f susfs.patch
     else
-            echo "Kernel version is <=5.10, using non-GKI patch"
-            curl -LSs "https://raw.githubusercontent.com/galaxybuild-project/tools/refs/heads/main/Patches/0001-KernelSU-Next-Implement-susfs-v1.5.3-plus-non-gki.patch" > susfs.patch
         echo "Kernel version is too old, please use kernel version >=4.0"
-        patch -p1 < susfs.patch
-        rm -f susfs.patch
     fi
 }
 
