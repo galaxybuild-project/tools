@@ -55,14 +55,14 @@ echo "############################################"
 echo "KernelSU Next with SuSFS Patches"
 echo "Made by @blueskychan-dev, @sidex15, @rifsxd"
 echo "############################################"
-echo "Checking if KernelSU-NEXT is installed..."
-if [ -d "KernelSU-NEXT" ]; then
-    echo "KernelSU-NEXT is installed, uninstalling..."
-    rm -rf KernelSU-NEXT
+echo "Checking if KernelSU-Next is installed..."
+if [ -d "KernelSU-Next" ]; then
+    echo "KernelSU-Next is installed, uninstalling..."
+    rm -rf KernelSU-Next
 else
-    echo "KernelSU-NEXT is not installed"
+    echo "KernelSU-Next is not installed"
 fi
-echo "Installing KernelSU-NEXT..."
+echo "Installing KernelSU-Next..."
 install_kernel_su_next
 echo "Patching SuSFS..."
 patch_susfs
