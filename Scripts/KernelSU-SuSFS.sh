@@ -28,8 +28,8 @@ if [ ! -f "Makefile" ]; then
 fi
 
 install_kernel_su_next() {
-    if [ -d "KernelSU-NEXT" ]; then
-        rm -rf KernelSU-NEXT
+    if [ -d "KernelSU-Next" ]; then
+        rm -rf KernelSU-Next
     fi
     curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next/kernel/setup.sh" | bash -
 }
@@ -43,7 +43,7 @@ patch_susfs() {
             echo "Kernel version is <=4.19, using non-GKI patch"
             curl -LSs "https://raw.githubusercontent.com/galaxybuild-project/tools/refs/heads/main/Patches/0001-KernelSU-Next-Implement-susfs-v1.5.3-plus-non-gki.patch" > susfs.patch
         fi
-        cd KernelSU-NEXT
+        cd KernelSU-Next
         patch -p1 < susfs.patch
         rm -f susfs.patch
     else
