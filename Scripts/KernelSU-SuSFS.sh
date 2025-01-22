@@ -37,25 +37,28 @@ install_kernel_su_next() {
 
 patch_susfs() {
     echo "Entering KernelSU-Next directory..."
-    cd KernelSU-Next
+    cd KernelSU-Next || exit 1
     if [ $KERNEL_MAJOR -ge 4 ]; then
-        if [ $KERNEL_MAJOR -gt 4 ] || ([ $KERNEL_MAJOR -eq 4 ] && [ $KERNEL_MINOR -ge 19 ]); then
-            echo "Kernel version is >= 4.19, using GKI patch"
-            curl -LSs "https://raw.githubusercontent.com/galaxybuild-project/tools/refs/heads/main/Patches/0001-KernelSU-Next-Implement-SUSFS-v1.5.3-plus-GKI.patch" > susfs.patch
+        if [ $KERNEL_MAJOR -gt 4 ] || ([ $KERNEL_MAJOR -eq 4 ] && [ $KERNEL_MINOR -ge 9 ]); then
+            echo "The kernel does support susfs4ksu!, applying universal SUSFS patch"
+            curl -LSs "https://raw.githubusercontent.com/galaxybuild-project/tools/refs/heads/main/Patches/0001-Implement-SUSFS-v1.5.3-universal.patch" > susfs.patch
+            patch -p1 < susfs.patch
+            rm -f susfs.patch
         else
-            echo "Kernel version is < 4.19, using non-GKI patch"
-            curl -LSs "https://raw.githubusercontent.com/galaxybuild-project/tools/refs/heads/main/Patches/0001-KernelSU-Next-Implement-susfs-v1.5.3-plus-non-gki.patch" > susfs.patch
+            echo "Kernel version is =< 4.9. SUSFS is not supported. Aborting."
+            exit 1
         fi
-        patch -p1 < susfs.patch
-        rm -f susfs.patch
     else
-        echo "Kernel version is too old, please use kernel version >= 4.0"
+        echo "Kernel version is too old. SUSFS requires kernel version >= 4.9. Aborting."
+        exit 1
     fi
 }
+
 
 echo "############################################"
 echo "KernelSU Next with SuSFS Patches"
 echo "Made by @blueskychan-dev, @sidex15, @rifsxd"
+echo "Lastest updated: 22 Janurary 2025"
 echo "############################################"
 echo "Checking if KernelSU-Next is installed..."
 if [ -d "KernelSU-Next" ]; then
