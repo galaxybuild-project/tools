@@ -63,9 +63,9 @@ patch_susfs() {
 show_help() {
     echo "Usage: $0 [OPTIONS]"
     echo "Options:"
-    echo "  -h, --help        Show this help message and exit"
-    echo "  -n, --newerpatch  Use alternative SUSFS patch to fix compile errors (for GKI 2.0+ or some kernel source, not recommend to use this if you don't have any issues)"
-    echo "  -s <version>      Specify KernelSU-Next version to install (e.g., 'next', 'v1.0.3')"
+    echo "  help                Show this help message and exit"
+    echo "  newerpatch          Use newer SUSFS patch to fix compile errors"
+    echo "  <commit-or-tag>:    Sets up or updates the KernelSU-Next to specified tag or commit."
 }
 
 # Parse command-line arguments
@@ -73,22 +73,17 @@ NEWER_PATCH="false"
 KERNELSU_VERSION=""
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        -n|--newerpatch)
+        newerpatch)
             NEWER_PATCH="true"
             shift
             ;;
-        -s)
-            KERNELSU_VERSION="$2"
-            shift 2
-            ;;
-        -h|--help)
+        help)
             show_help
             exit 0
             ;;
         *)
-            echo "Unknown option: $1"
-            show_help
-            exit 1
+            KERNELSU_VERSION="$1"
+            shift
             ;;
     esac
 done
