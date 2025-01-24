@@ -45,6 +45,11 @@ patch_susfs() {
             echo "The kernel does support susfs4ksu!, applying SUSFS patch"
             local patch_url="https://raw.githubusercontent.com/galaxybuild-project/tools/refs/heads/main/Patches/0001-Implement-SUSFS-v1.5.3-universal.patch"
             if [ "$newer_patch" = "true" ]; then
+                echo "PLEASE REPATCH SUSFS FROM KERNEL SIDE WITH LASTEST COMMIT TO FIX THE COMPILATION ERRORS, IF YOU WISH TO USE THIS OPTIONS TO FIX COMPILATION ERRORS, THIS MAYBE BROKEN!"
+                echo "!!! YOU HAVE BEEN WARNED !!!"
+                echo "Please wait for 5 seconds before applying the patch..."
+                time sleep 5
+                echo "Applying alternative/homemade fix SUSFS patch..."
                 patch_url="https://raw.githubusercontent.com/galaxybuild-project/tools/refs/heads/main/Patches/0001-Implement-SUSFS-v1.5.3-newerfixed.patch"
             fi
             curl -LSs "$patch_url" > susfs.patch
@@ -64,7 +69,7 @@ show_help() {
     echo "Usage: $0 [OPTIONS]"
     echo "Options:"
     echo "  help                Show this help message and exit"
-    echo "  newerpatch          Use alternative/homemade fix SUSFS patch to fix compile errors (For GKI 2.0+ or some kernel source, not recommended to use this option unless you have problem with compiling)"
+    echo "  newerpatch          Use alternative/homemade fix SUSFS patch to fix compile errors (DO NOT USE THIS/EXPERIMENTAL!!!!! ERROR RATE 99.99%)"
     echo "  <commit-or-tag>:    Sets up or updates the KernelSU-Next to specified tag or commit."
 }
 
