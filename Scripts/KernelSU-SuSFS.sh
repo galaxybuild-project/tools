@@ -64,7 +64,7 @@ show_help() {
     echo "Usage: $0 [OPTIONS]"
     echo "Options:"
     echo "  help                Show this help message and exit"
-    echo "  newerpatch          Use newer SUSFS patch to fix compile errors"
+    echo "  newerpatch          Use alternative/homemade fix SUSFS patch to fix compile errors (For GKI 2.0+ or some kernel source, not recommended to use this option unless you have problem with compiling)"
     echo "  <commit-or-tag>:    Sets up or updates the KernelSU-Next to specified tag or commit."
 }
 
