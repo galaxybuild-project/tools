@@ -43,15 +43,7 @@ patch_susfs() {
     if [ $KERNEL_MAJOR -ge 4 ]; then
         if [ $KERNEL_MAJOR -gt 4 ] || ([ $KERNEL_MAJOR -eq 4 ] && [ $KERNEL_MINOR -ge 9 ]); then
             echo "The kernel does support susfs4ksu!, applying SUSFS patch"
-            local patch_url="https://raw.githubusercontent.com/galaxybuild-project/tools/refs/heads/main/Patches/0001-Implement-SUSFS-v1.5.3-universal.patch"
-            if [ "$newer_patch" = "true" ]; then
-                echo "PLEASE REPATCH SUSFS FROM KERNEL SIDE WITH LASTEST COMMIT TO FIX THE COMPILATION ERRORS, IF YOU WISH TO USE THIS OPTIONS TO FIX COMPILATION ERRORS, THIS MAYBE BROKEN!"
-                echo "!!! YOU HAVE BEEN WARNED !!!"
-                echo "Please wait for 5 seconds before applying the patch..."
-                time sleep 5
-                echo "Applying alternative/homemade fix SUSFS patch..."
-                patch_url="https://raw.githubusercontent.com/galaxybuild-project/tools/refs/heads/main/Patches/0001-Implement-SUSFS-v1.5.3-newerfixed.patch"
-            fi
+            local patch_url="https://raw.githubusercontent.com/galaxybuild-project/tools/refs/heads/main/Patches/Implement-SUSFS-v1.5.4-for-KernelSU-Next.patch"
             curl -LSs "$patch_url" > susfs.patch
             patch -p1 < susfs.patch
             rm -f susfs.patch
@@ -69,7 +61,6 @@ show_help() {
     echo "Usage: $0 [OPTIONS]"
     echo "Options:"
     echo "  help                Show this help message and exit"
-    echo "  newerpatch          Use alternative/homemade fix SUSFS patch to fix compile errors (DO NOT USE THIS/EXPERIMENTAL!!!!! ERROR RATE 99.99%)"
     echo "  <commit-or-tag>:    Sets up or updates the KernelSU-Next to specified tag or commit."
 }
 
@@ -79,7 +70,7 @@ KERNELSU_VERSION=""
 while [[ $# -gt 0 ]]; do
     case "$1" in
         newerpatch)
-            NEWER_PATCH="true"
+            NEWER_PATCH="false"
             shift
             ;;
         help)
@@ -101,7 +92,7 @@ fi
 echo "############################################"
 echo "KernelSU Next with SuSFS Patches"
 echo "Made by @blueskychan-dev, @sidex15, @rifsxd"
-echo "Lastest updated: 24 January 2025"
+echo "Lastest updated: 27 January 2025"
 echo "############################################"
 echo "Checking if KernelSU-Next is installed..."
 if [ -d "KernelSU-Next" ]; then
