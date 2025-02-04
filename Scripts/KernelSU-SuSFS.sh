@@ -43,7 +43,7 @@ patch_susfs() {
     if [ $KERNEL_MAJOR -ge 4 ]; then
         if [ $KERNEL_MAJOR -gt 4 ] || ([ $KERNEL_MAJOR -eq 4 ] && [ $KERNEL_MINOR -ge 9 ]); then
             echo "The kernel does support susfs4ksu!, applying SUSFS patch"
-            local patch_url="https://raw.githubusercontent.com/galaxybuild-project/tools/refs/heads/main/Patches/Implement-SUSFS-v1.5.4-for-KernelSU-Next.patch"
+            local patch_url="https://raw.githubusercontent.com/galaxybuild-project/tools/refs/heads/main/Patches/KernelSU-Next-Implement-SUSFS-v1.5.5-Universal.patch"
             curl -LSs "$patch_url" > susfs.patch
             patch -p1 < susfs.patch
             rm -f susfs.patch
@@ -92,7 +92,7 @@ fi
 echo "############################################"
 echo "KernelSU Next with SuSFS Patches"
 echo "Made by @blueskychan-dev, @sidex15, @rifsxd"
-echo "Last updated: 27 January 2025"
+echo "Last updated: 4 February 2025"
 echo "############################################"
 echo ""
 echo "⚠️ This script will be **DEPRECATED** soon!"
