@@ -92,7 +92,7 @@ fi
 echo "############################################"
 echo "KernelSU Next with SuSFS Patches"
 echo "Made by @blueskychan-dev, @sidex15, @rifsxd"
-echo "Last updated: 28 February 2025"
+echo "Last updated: 4 April 2025"
 echo "############################################"
 echo ""
 echo "⚠️ This script will be **DEPRECATED** soon!"
