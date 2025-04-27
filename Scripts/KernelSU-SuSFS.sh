@@ -19,14 +19,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-KERNEL_VERSION=$(make kernelversion | grep -v "Entering\|Leaving")
-KERNEL_MAJOR=$(echo $KERNEL_VERSION | cut -d'.' -f1)
-KERNEL_MINOR=$(echo $KERNEL_VERSION | cut -d'.' -f2)
-
 if [ ! -f "Makefile" ]; then
     echo "Makefile not found, please run this script in kernel source directory"
     exit 1
 fi
+
+KERNEL_VERSION=$(make kernelversion | grep -v "Entering\|Leaving")
+KERNEL_MAJOR=$(echo $KERNEL_VERSION | cut -d'.' -f1)
+KERNEL_MINOR=$(echo $KERNEL_VERSION | cut -d'.' -f2)
 
 install_kernel_su_next() {
     if [ -d "KernelSU-Next" ]; then
@@ -36,25 +36,23 @@ install_kernel_su_next() {
     curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next/kernel/setup.sh" | bash $version_flag
 }
 
-patch_susfs() {
-    local newer_patch=$1
+patch_susfs_old() {
     echo "Entering KernelSU-Next directory..."
     cd KernelSU-Next || exit 1
-    if [ $KERNEL_MAJOR -ge 4 ]; then
-        if [ $KERNEL_MAJOR -gt 4 ] || ([ $KERNEL_MAJOR -eq 4 ] && [ $KERNEL_MINOR -ge 9 ]); then
-            echo "The kernel does support susfs4ksu!, applying SUSFS patch"
-            local patch_url="https://raw.githubusercontent.com/galaxybuild-project/tools/refs/heads/main/Patches/0001-kernel-patch-susfs-v1.5.5-to-KernelSU-Next-v1.0.5.patch"
-            curl -LSs "$patch_url" > susfs.patch
-            patch -p1 < susfs.patch
-            rm -f susfs.patch
-        else
-            echo "Kernel version is =< 4.9. SUSFS is not supported. Aborting."
-            exit 1
-        fi
-    else
-        echo "Kernel version is too old. SUSFS requires kernel version >= 4.9. Aborting."
-        exit 1
-    fi
+    echo "Applying old SUSFS patch for KernelSU-Next..."
+    local patch_url="https://raw.githubusercontent.com/galaxybuild-project/tools/refs/heads/main/Patches/0001-kernel-patch-susfs-v1.5.5-to-KernelSU-Next-v1.0.5.patch"
+    curl -LSs "$patch_url" > susfs.patch
+    patch -p1 < susfs.patch
+    rm -f susfs.patch
+    cd ..
+}
+
+patch_susfs_gki() {
+    echo "Applying SuSFS patch v1.5.7 for kernel >= 5.10..."
+    local patch_url="https://raw.githubusercontent.com/galaxybuild-project/tools/refs/heads/main/Patches/kernel-implement-susfs-v1.5.7-gki.patch"
+    curl -LSs "$patch_url" > susfs-gki.patch
+    patch -p1 < susfs-gki.patch
+    rm -f susfs-gki.patch
 }
 
 show_help() {
@@ -65,14 +63,9 @@ show_help() {
 }
 
 # Parse command-line arguments
-NEWER_PATCH="false"
 KERNELSU_VERSION=""
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        newerpatch)
-            NEWER_PATCH="false"
-            shift
-            ;;
         help)
             show_help
             exit 0
@@ -92,7 +85,7 @@ fi
 echo "############################################"
 echo "KernelSU Next with SuSFS Patches"
 echo "Made by @blueskychan-dev, @sidex15, @rifsxd"
-echo "Last updated: 4 April 2025"
+echo "Last updated: 27 April 2025"
 echo "############################################"
 echo ""
 echo "⚠️ This script will be **DEPRECATED** soon!"
@@ -102,17 +95,30 @@ echo ""
 echo "For more info, visit:"
 echo "➡️ https://t.me/galaxybuild_project/268"
 echo ""
-echo "Checking if KernelSU-Next is installed..."
-if [ -d "KernelSU-Next" ]; then
-    echo "KernelSU-Next is installed, uninstalling..."
-    rm -rf KernelSU-Next
-else
-    echo "KernelSU-Next is not installed"
+
+# Check if kernel is supported
+if [ "$KERNEL_MAJOR" -lt 4 ] || ([ "$KERNEL_MAJOR" -eq 4 ] && [ "$KERNEL_MINOR" -lt 9 ]); then
+    echo "Kernel version is too old. SUSFS requires kernel version >= 4.9. Aborting."
+    exit 1
 fi
-echo "Installing KernelSU-Next..."
-install_kernel_su_next "$VERSION_FLAG"
-echo "Patching SuSFS..."
-patch_susfs "$NEWER_PATCH"
+
+# Decide patch method
+if [ "$KERNEL_MAJOR" -gt 5 ] || ([ "$KERNEL_MAJOR" -eq 5 ] && [ "$KERNEL_MINOR" -ge 10 ]); then
+    echo "Kernel version $KERNEL_VERSION detected: applying GKI SuSFS patch (for 5.10+ kernels)"
+    patch_susfs_gki
+else
+    echo "Kernel version $KERNEL_VERSION detected: applying old SuSFS patch (for KernelSU-Next)"
+    echo "Checking if KernelSU-Next is installed..."
+    if [ -d "KernelSU-Next" ]; then
+        echo "KernelSU-Next is installed, uninstalling..."
+        rm -rf KernelSU-Next
+    else
+        echo "KernelSU-Next is not installed"
+    fi
+    echo "Installing KernelSU-Next..."
+    install_kernel_su_next "$VERSION_FLAG"
+    patch_susfs_old
+fi
+
 echo ""
 echo "✅ Done! Thanks for using my script :3"
-
