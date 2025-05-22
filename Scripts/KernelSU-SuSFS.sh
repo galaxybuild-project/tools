@@ -39,8 +39,8 @@ install_kernel_su_next() {
 patch_susfs_old() {
     echo "Entering KernelSU-Next directory..."
     cd KernelSU-Next || exit 1
-    echo "Applying old SUSFS patch for KernelSU-Next..."
-    local patch_url="https://raw.githubusercontent.com/galaxybuild-project/tools/refs/heads/main/Patches/0001-kernel-patch-susfs-v1.5.5-to-KernelSU-Next-v1.0.5.patch"
+    echo "Applying SUSFS patch for KernelSU-Next..."
+    local patch_url="https://raw.githubusercontent.com/galaxybuild-project/tools/refs/heads/main/Patches/0001_susfs_157_for_ksunext.patch"
     curl -LSs "$patch_url" > susfs.patch
     patch -p1 < susfs.patch
     rm -f susfs.patch
@@ -49,7 +49,7 @@ patch_susfs_old() {
 
 patch_susfs_gki() {
     echo "Applying SuSFS patch v1.5.7 for kernel >= 5.10..."
-    local patch_url="https://raw.githubusercontent.com/galaxybuild-project/tools/refs/heads/main/Patches/kernel-implement-susfs-v1.5.7-gki.patch"
+    local patch_url="https://raw.githubusercontent.com/galaxybuild-project/tools/refs/heads/main/Patches/0001_susfs_157_for_ksunext.patch"
     curl -LSs "$patch_url" > susfs-gki.patch
     patch -p1 < susfs-gki.patch
     rm -f susfs-gki.patch
@@ -85,7 +85,7 @@ fi
 echo "############################################"
 echo "KernelSU Next with SuSFS Patches"
 echo "Made by @blueskychan-dev, @sidex15, @rifsxd"
-echo "Last updated: 27 April 2025"
+echo "Last updated: 22 May 2025"
 echo "############################################"
 echo ""
 echo "⚠️ This script will be **DEPRECATED** soon!"
