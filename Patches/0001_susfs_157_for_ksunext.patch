@@ -1,12 +1,12 @@
-From c6d8160611d5fa57425924ac956ba865252e4040 Mon Sep 17 00:00:00 2001
-From: rifsxd <rifat.44.azad.rifs@gmail.com>
-Date: Fri, 23 May 2025 05:34:18 +0600
-Subject: [PATCH] kernel: patch susfs v1.5.7 to KernelSU-Next (v1.0.7)
+From 7d8a94ceed06f778f1a5d56fcd884f8bb253c663 Mon Sep 17 00:00:00 2001
+From: Phapoom Saksri <hello@mindhas403.dev>
+Date: Sat, 24 May 2025 22:04:54 +0700
+Subject: [PATCH] kernel: patch susfs v1.5.7 to KernelSU-Next (v1.0.7, fixver)
 
 ---
  kernel/.gitignore        |   3 +
  kernel/Kconfig           | 144 +++++++++++
- kernel/Makefile          |  79 +++++-
+ kernel/Makefile          |  77 ++++++
  kernel/allowlist.c       |  10 +-
  kernel/apk_sign.c        |   2 +-
  kernel/apk_sign.h        |   2 +-
@@ -20,11 +20,10 @@ Subject: [PATCH] kernel: patch susfs v1.5.7 to KernelSU-Next (v1.0.7)
  kernel/selinux/rules.c   |  16 +-
  kernel/selinux/selinux.c |  95 ++++++-
  kernel/selinux/selinux.h |  24 +-
- kernel/setup.sh          |   2 +-
  kernel/sucompat.c        |  71 ++++-
  kernel/throne_tracker.c  |   4 +-
  kernel/throne_tracker.h  |   2 +-
- 20 files changed, 986 insertions(+), 66 deletions(-)
+ 19 files changed, 984 insertions(+), 64 deletions(-)
  create mode 100644 kernel/.gitignore
 
 diff --git a/kernel/.gitignore b/kernel/.gitignore
@@ -191,18 +190,9 @@ index ab6dd5c9..f4ab963a 100644
 +
  endmenu
 diff --git a/kernel/Makefile b/kernel/Makefile
-index aa380e9a..be32543a 100644
+index aa380e9a..8aa8d6e3 100644
 --- a/kernel/Makefile
 +++ b/kernel/Makefile
-@@ -21,7 +21,7 @@ ifeq ($(shell test -e $(srctree)/$(src)/../.git; echo $$?),0)
- $(shell cd $(srctree)/$(src); /usr/bin/env PATH="$$PATH":/usr/bin:/usr/local/bin [ -f ../.git/shallow ] && git fetch --unshallow)
- KSU_GIT_VERSION := $(shell cd $(srctree)/$(src); /usr/bin/env PATH="$$PATH":/usr/bin:/usr/local/bin git rev-list --count HEAD)
- # ksu_version: major * 10000 + git version + 200 for historical reasons
--$(eval KSU_VERSION=$(shell expr 10000 + $(KSU_GIT_VERSION) + 200))
-+$(eval KSU_VERSION=$(shell expr 10000 + $(KSU_GIT_VERSION) + 200))
- $(info -- KernelSU-Next version: $(KSU_VERSION))
- ccflags-y += -DKSU_VERSION=$(KSU_VERSION)
- else # If there is no .git file, the default version will be passed.
 @@ -150,4 +150,81 @@ endif
  ccflags-y += -Wno-implicit-function-declaration -Wno-strict-prototypes -Wno-int-conversion -Wno-gcc-compat
  ccflags-y += -Wno-declaration-after-statement -Wno-unused-function
@@ -1499,21 +1489,8 @@ index 07120c25..d0dfdf9c 100644
  
  u32 ksu_get_devpts_sid();
  
-diff --git a/kernel/setup.sh b/kernel/setup.sh
-index aadc1adb..42483809 100755
---- a/kernel/setup.sh
-+++ b/kernel/setup.sh
-@@ -43,7 +43,7 @@ setup_kernelsu() {
-     cd "$GKI_ROOT/KernelSU-Next"
-     git stash && echo "[-] Stashed current changes."
-     if [ "$(git status | grep -Po 'v\d+(\.\d+)*' | head -n1)" ]; then
--        git checkout next && echo "[-] Switched to next branch."
-+        git checkout next-susfs && echo "[-] Switched to next-susfs branch."
-     fi
-     git pull && echo "[+] Repository updated."
-     if [ -z "${1-}" ]; then
 diff --git a/kernel/sucompat.c b/kernel/sucompat.c
-index 11b2a551..4d726274 100644
+index 11b2a551..c84fa3fa 100644
 --- a/kernel/sucompat.c
 +++ b/kernel/sucompat.c
 @@ -13,6 +13,9 @@
@@ -1606,7 +1583,7 @@ index 11b2a551..4d726274 100644
 +
 +void ksu_susfs_disable_sus_su(void) {
 +	susfs_is_sus_su_hooks_enabled = false;
-+	ksu_devpts_hook = false;
++	bool ksu_devpts_hook = false;
 +	susfs_sus_su_working_mode = SUS_SU_DISABLED;
 +	// Re-enable the su_kps for user, users need to toggle off the kprobe hooks again in ksu manager if they want it disabled.
 +	if (!ksu_is_su_kps_enabled()) {
@@ -1661,5 +1638,5 @@ index 5d7f4770..428c737d 100644
  
  #endif
 -- 
-2.34.1
+2.49.0
 
