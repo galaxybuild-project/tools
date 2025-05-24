@@ -1,6 +1,6 @@
-From bdd12fbe6b0812907a6239b2505d6ed6f9f03f38 Mon Sep 17 00:00:00 2001
+From dd50c1255652a5f4ef5df4cba7cdde3ca3e70115 Mon Sep 17 00:00:00 2001
 From: Phapoom Saksri <hello@mindhas403.dev>
-Date: Sat, 24 May 2025 22:34:07 +0700
+Date: Sat, 24 May 2025 23:16:08 +0700
 Subject: [PATCH] kernel: patch susfs v1.5.7 to KernelSU-Next (v1.0.7, fixver)
 
 ---
@@ -351,7 +351,7 @@ index bed501c4..e02aa514 100644
  
  #endif
 diff --git a/kernel/core_hook.c b/kernel/core_hook.c
-index 7fd2d455..30f6a172 100644
+index 7fd2d455..f46e9d9d 100644
 --- a/kernel/core_hook.c
 +++ b/kernel/core_hook.c
 @@ -35,6 +35,10 @@
@@ -381,6 +381,7 @@ index 7fd2d455..30f6a172 100644
 +
 +extern u32 susfs_zygote_sid;
 +extern bool susfs_is_mnt_devname_ksu(struct path *path);
++extern bool ksu_devpts_hook;
 +#ifdef CONFIG_KSU_SUSFS_ENABLE_LOG
 +extern bool susfs_is_log_enabled __read_mostly;
 +#endif
@@ -404,7 +405,6 @@ index 7fd2d455..30f6a172 100644
 +extern bool susfs_is_sus_su_ready;
 +extern int susfs_sus_su_working_mode;
 +extern bool susfs_is_sus_su_hooks_enabled __read_mostly;
-+extern bool ksu_devpts_hook;
 +#endif // #ifdef CONFIG_KSU_SUSFS_SUS_SU
 +
 +static inline void susfs_on_post_fs_data(void) {
