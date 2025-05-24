@@ -1,7 +1,8 @@
-From dd50c1255652a5f4ef5df4cba7cdde3ca3e70115 Mon Sep 17 00:00:00 2001
+From a7d548e3a032f8583840a3080911e0d6bcfc85e8 Mon Sep 17 00:00:00 2001
 From: Phapoom Saksri <hello@mindhas403.dev>
-Date: Sat, 24 May 2025 23:16:08 +0700
-Subject: [PATCH] kernel: patch susfs v1.5.7 to KernelSU-Next (v1.0.7, fixver)
+Date: Sat, 24 May 2025 23:42:23 +0700
+Subject: [PATCH] kernel: patch susfs v1.5.7 to KernelSU-Next (v1.0.7, fixver
+ kms)
 
 ---
  kernel/.gitignore        |   3 +
@@ -351,7 +352,7 @@ index bed501c4..e02aa514 100644
  
  #endif
 diff --git a/kernel/core_hook.c b/kernel/core_hook.c
-index 7fd2d455..f46e9d9d 100644
+index 7fd2d455..35e08fb8 100644
 --- a/kernel/core_hook.c
 +++ b/kernel/core_hook.c
 @@ -35,6 +35,10 @@
@@ -886,7 +887,7 @@ index 7fd2d455..f46e9d9d 100644
 +#ifdef CONFIG_KSU_SUSFS_SUS_SU
 +			// We disable all sus_su hook whenever user toggle on su_kps
 +			susfs_is_sus_su_hooks_enabled = false;
-+			ksu_devpts_hook = false;
++			bool ksu_devpts_hook = false;
 +			susfs_sus_su_working_mode = SUS_SU_DISABLED;
 +#endif
  			ksu_sucompat_init();
