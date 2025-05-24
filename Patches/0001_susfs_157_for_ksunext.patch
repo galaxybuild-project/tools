@@ -1,6 +1,6 @@
-From 7d8a94ceed06f778f1a5d56fcd884f8bb253c663 Mon Sep 17 00:00:00 2001
+From bdd12fbe6b0812907a6239b2505d6ed6f9f03f38 Mon Sep 17 00:00:00 2001
 From: Phapoom Saksri <hello@mindhas403.dev>
-Date: Sat, 24 May 2025 22:04:54 +0700
+Date: Sat, 24 May 2025 22:34:07 +0700
 Subject: [PATCH] kernel: patch susfs v1.5.7 to KernelSU-Next (v1.0.7, fixver)
 
 ---
@@ -1490,7 +1490,7 @@ index 07120c25..d0dfdf9c 100644
  u32 ksu_get_devpts_sid();
  
 diff --git a/kernel/sucompat.c b/kernel/sucompat.c
-index 11b2a551..c84fa3fa 100644
+index 11b2a551..5f102269 100644
 --- a/kernel/sucompat.c
 +++ b/kernel/sucompat.c
 @@ -13,6 +13,9 @@
@@ -1598,7 +1598,7 @@ index 11b2a551..c84fa3fa 100644
 +		ksu_su_compat_enabled = false;
 +	}
 +	susfs_is_sus_su_hooks_enabled = true;
-+	ksu_devpts_hook = true;
++	bool ksu_devpts_hook = true;
 +	susfs_sus_su_working_mode = SUS_SU_WITH_HOOKS;
 +}
 +#endif // #ifdef CONFIG_KSU_SUSFS_SUS_SU
